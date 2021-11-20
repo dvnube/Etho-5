@@ -4,6 +4,7 @@
     <columns>NAME</columns>
     <columns>Candidato__c</columns>
     <columns>Eliminado__c</columns>
+    <columns>Morreu__c</columns>
     <columns>DataMorte__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
