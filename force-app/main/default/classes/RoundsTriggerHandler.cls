@@ -8,7 +8,7 @@ public without sharing class RoundsTriggerHandler {
         List<Jogador__c> jogadoresToUpdate = new List<Jogador__c>();
 
         for (Round__c record : records) {
-            afterUpdate(record, oldMap.get(record.Id), recordsWithJogadoresMap.get(record.Id).Jogadores__r, jogadoresToUpdate);
+            afterUpdate(record, oldMap.get(record.Id), recordsWithJogadoresMap.get(record.Id).Jogadores2__r, jogadoresToUpdate);
         }
 
         update jogadoresToUpdate;
@@ -19,12 +19,10 @@ public without sharing class RoundsTriggerHandler {
     }
 
     //TODO: não pagar família de membro do staff e cálculo não deverá considerá-lo como um jogador
-    //Se o campo Premio__c está considerando esse filha da puta, o campo tá errado
-    //Se o campo TotalJogadoresEliminados__c está considerando esse filho da puta também, o campo tb tá errado
-    //MAS, tentem resolver essa pica SOMENTE usando código
     private static void handleSuspensao(Round__c record, Round__c recordOld, List<Jogador__c> jogadoresRound, List<Jogador__c> jogadoresToUpdate) {
-        if (roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
-            setValorPagarMortos((record.Premio__c/record.TotalJogadoresEliminados__c), jogadoresRound);
+        if (!jogadoresRound.isEmpty() && roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
+            setValorPagarMortos(record.Premio__c, getPremioReal(record.Premio__c, jogadoresRound));
+            
             jogadoresToUpdate.addAll(jogadoresRound);
         }
     }
@@ -33,11 +31,31 @@ public without sharing class RoundsTriggerHandler {
         return statusOld.equals(STATUS_ROUND_SUSPENSO) && status.equals(STATUS_ROUND_FINALIZADO);
     }
 
-    private static void setValorPagarMortos(Decimal valorPagar, List<Jogador__c> jogadoresRound) {
+    private static void setValorPagarMortos(Decimal premio, List<Jogador__c> jogadoresRound) {
+        premio = getPremioReal(premio, jogadoresRound);
+
         for (Jogador__c jogador : jogadoresRound) {
-            jogador.ValorPagar__c = valorPagar;
+            if (isMembroStaff(jogador.RecordType.DeveloperName)) {
+                Utils.setValue(jogador, Jogador__c.ValorPagar__c, premio);
+            }
         }
     }
 
+    private static Decimal getPremioReal(Decimal premio, List<Jogador__c> jogadoresRound) {
+        Integer qtdMembroStaff = 0;
 
+        for (Jogador__c jogador : jogadoresRound) {
+            if (isMembroStaff(jogador.RecordType.DeveloperName)) {
+                qtdMembroStaff++;
+            }
+        }
+
+        Integer qtdJogadoresValidos = (jogadoresRound.size() - qtdMembroStaff);
+
+        return (qtdJogadoresValidos > 0) ? premio/qtdJogadoresValidos : 0;
+    }
+
+    private static Boolean isMembroStaff(String recordTypeDeveloperName) {
+        return recordTypeDeveloperName.equals(Label.RECORD_TYPE_DEVELOPER_NAME_MEMBRO_STAFF);
+    }
 }
