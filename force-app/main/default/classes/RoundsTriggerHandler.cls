@@ -21,7 +21,7 @@ public without sharing class RoundsTriggerHandler {
     //TODO: não pagar família de membro do staff e cálculo não deverá considerá-lo como um jogador
     private static void handleSuspensao(Round__c record, Round__c recordOld, List<Jogador__c> jogadoresRound, List<Jogador__c> jogadoresToUpdate) {
         if (!jogadoresRound.isEmpty() && roundFinalizadoPorSuspensao(record.Status__c, recordOld.Status__c)) {
-            setValorPagarMortos(record.Premio__c, getPremioReal(record.Premio__c, jogadoresRound));
+            setValorPagarMortos(getPremioReal(record.Premio__c, jogadoresRound), jogadoresRound);
             
             jogadoresToUpdate.addAll(jogadoresRound);
         }
