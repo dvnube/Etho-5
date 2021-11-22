@@ -1,5 +1,8 @@
 public without sharing class RoundsTriggerHandler {    
 
+    static FINAL String STATUS_ROUND_SUSPENSO = 'Suspenso';
+    static FINAL String STATUS_ROUND_FINALIZADO = 'Finalizado';
+
     public static void afterUpdate(List<Round__c> records, Map<Id, Round__c> oldMap) {
         Map<Id, Round__c> recordsWithJogadoresMap = new Map<Id, Round__c>(RoundsSelector.selectByRoundsIdsWithJogadores(oldMap.keySet()));
         List<Jogador__c> jogadoresToUpdate = new List<Jogador__c>();
@@ -27,8 +30,7 @@ public without sharing class RoundsTriggerHandler {
     }
 
     private static Boolean roundFinalizadoPorSuspensao(String status, String statusOld) {
-        //TODO: essa merda aqui
-        return true;
+        return statusOld.equals(STATUS_ROUND_SUSPENSO) && status.equals(STATUS_ROUND_FINALIZADO);
     }
 
     private static void setValorPagarMortos(Decimal valorPagar, List<Jogador__c> jogadoresRound) {
