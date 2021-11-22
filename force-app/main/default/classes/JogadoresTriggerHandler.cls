@@ -5,7 +5,7 @@ public without sharing class JogadoresTriggerHandler {
 
         for (Jogador__c jogador : jogadores) {
             afterInsert(jogador);
-        }        
+        }      
 
         update jogadores;
     }
