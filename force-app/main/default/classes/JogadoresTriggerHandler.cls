@@ -50,6 +50,7 @@ public without sharing class JogadoresTriggerHandler {
         );
     }
 
+    @TestVisible
     private static Boolean foiEliminado(Jogador__c record, Jogador__c recordOld){
         return isChanged(recordOld, record, Jogador__c.Eliminado__c);
     }
