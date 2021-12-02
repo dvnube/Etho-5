@@ -2,7 +2,7 @@ import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class EasyForm extends LightningElement {
-  filtro = "";
+  filtros = { sobrenome: "", idade: "" };
 
   contatos = [
     { Id: 1, Name: "Renato", Sobrenome__c: "De Vico" },
@@ -21,7 +21,7 @@ export default class EasyForm extends LightningElement {
   }
 
   handleChange(event) {
-    this.filtro = event.target.value;
+    this.filtro[event.target.dataset.attributeName] = event.target.value;
   }
 
   /* salvar(event) {
