@@ -1,6 +1,6 @@
-import { LightningElement, api } from 'lwc';
+import { api, LightningElement } from "lwc";
 
 export default class JogadorContainer extends LightningElement {
-    @api jogador;
-    @api index;
+  @api jogador;
+  @api index;
 }

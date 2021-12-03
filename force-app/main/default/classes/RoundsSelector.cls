@@ -40,4 +40,12 @@ public without sharing class RoundsSelector {
         ];
     }
 
+    public static List<Round__c> selectAllRoundsWithJogadoresNaoEliminados() {
+        return [
+            SELECT Id, Name, Vencedor__c, PremioTotal__c, (SELECT Id, Name,  Candidato__r.Name FROM Jogadores2__r)
+            FROM Round__c
+            WHERE Status__c = 'Em Andamento'
+        ];
+    }
+
 }
