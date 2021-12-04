@@ -15,6 +15,10 @@ public with sharing class SimulacaoContainerController {
             Assassinato__c ass = AssassinatosHandler.execute(jogadores);
             if (ass != null) {
                 insert ass;
+            
+                /* Jogador__c jog = new Jogador__c(Id=ass.Assassinado__c);
+                jog.Morreu__c = true;
+                update jog; */
             }      
             
             AssassinatoWrapper aw = new AssassinatoWrapper();

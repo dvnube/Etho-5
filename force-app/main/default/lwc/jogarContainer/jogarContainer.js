@@ -4,6 +4,7 @@ import tentarMatar from "@salesforce/apex/SimulacaoContainerController.tentativa
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class JogarContainer extends LightningElement {
+  //aux = { Name: "Bla" };
   rounds = [];
   roundSelecionado;
   @wire(selectAll) listOfObjectDetails({ error, data }) {
@@ -42,6 +43,8 @@ export default class JogarContainer extends LightningElement {
 
   handleClick(event) {
     event.preventDefault();
+    //this.aux.Name = "Ble";
+    //this.aux = { ...this.aux, Name: "Ble" };
     tentarMatar({ jogadores: this.roundSelecionadoCerto.Jogadores2__r })
       .then((result) => {
         if (result) {
@@ -49,7 +52,8 @@ export default class JogarContainer extends LightningElement {
           if (assassinato) {
             const assassino = this.getJogadorById(assassinato.Assassino__c);
             const assassinado = this.getJogadorById(assassinato.Assassinado__c);
-            this.updateRound(assassinato.Assassinado__c);
+            this.rounds = result.Rounds;
+            //this.updateRound(assassinato.Assassinado__c);
             let message = "Assassino: " + assassino.Name + "\n";
             message += "Assassinado: " + assassinado.Name;
             this.showToast("Assassinato", message, "success", "sticky");
@@ -86,7 +90,7 @@ export default class JogarContainer extends LightningElement {
 
   updateRound(idAssassinado) {
     let round = this.roundSelecionadoCerto;
-    let jogadoresRound = round.Jogadores2__r;
+    let jogadoresRound = [...round.Jogadores2__r];
     jogadoresRound = [
       ...jogadoresRound.map((jogador) => {
         if (jogador.Id == idAssassinado) {
