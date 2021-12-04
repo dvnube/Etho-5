@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from "lwc";
+import { LightningElement, wire } from "lwc";
 import selectAll from "@salesforce/apex/SimulacaoContainerController.getRoundsJogadores";
 import tentarMatar from "@salesforce/apex/SimulacaoContainerController.tentativaAssassinato";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
