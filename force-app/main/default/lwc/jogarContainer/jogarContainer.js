@@ -1,55 +1,109 @@
 import { LightningElement, wire, track } from "lwc";
 import selectAll from "@salesforce/apex/SimulacaoContainerController.getRoundsJogadores";
-//import selectAssassinatos from "@salesforce/apex/SimulacaoContainerController.getAssassinatosByRound";
+import tentarMatar from "@salesforce/apex/SimulacaoContainerController.tentativaAssassinato";
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class JogarContainer extends LightningElement {
-  @wire(selectAll) roundsData;
-  get rounds() {
-    return this.roundsData.data;
-  }
-
-  @track objItems = [];
-  @track objError;
-  @track roundSelecionado = "";
+  rounds = [];
+  roundSelecionado;
   @wire(selectAll) listOfObjectDetails({ error, data }) {
     if (data) {
-      for (var i = 0; i < data.length; i++) {
-        this.objItems = [
-          ...this.objItems,
-          { value: data[i].Id, label: data[i].Name }
-        ];
-      }
+      this.rounds = data;
     } else if (error) {
-      this.objError = error;
-      this.objects = undefined;
+      console.log("error: " + error);
     }
   }
-  get roundsOptions() {
-    return this.objItems;
+
+  get roundsCombobox() {
+    if (!this.rounds) {
+      return [];
+    }
+
+    return [
+      ...this.rounds.map((round) => {
+        return {
+          label: round.Name,
+          value: round.Id
+        };
+      })
+    ];
   }
+
   roundSelecionadoChange(event) {
     this.roundSelecionado = event.target.value;
-    //console.log(event.target.value);
-    this.jogadoresRound();
   }
-  listaJogadores = [];
-  jogadoresRound() {
-    this.listaJogadores = [];
 
-    for (var i = 0; i < this.roundsData.data.length; i++) {
-      for (var j = 0; j < this.roundsData.data[i].Jogadores__r.length; j++) {
-        if (this.roundsData.data[i].Id == this.roundSelecionado) {
-          let novoItem = {
-            Id: this.roundsData.data[i].Jogadores__r[j].Id,
-            Name: this.roundsData.data[i].Jogadores__r[j].Name,
-            Candidato: this.roundsData.data[i].Jogadores__r[j].Candidato__r.Name
-          };
-          this.listaJogadores.push(novoItem);
-        }
-      }
+  get roundSelecionadoCerto() {
+    if (this.rounds) {
+      return this.rounds.find((round) => round.Id == this.roundSelecionado);
     }
+    return {};
   }
 
-  //@wire(selectAssassinatos) assassinatosData;
-  //get()
+  handleClick(event) {
+    event.preventDefault();
+    tentarMatar({ jogadores: this.roundSelecionadoCerto.Jogadores2__r })
+      .then((result) => {
+        if (result) {
+          const assassinato = result.Assassinato;
+          if (assassinato) {
+            const assassino = this.getJogadorById(assassinato.Assassino__c);
+            const assassinado = this.getJogadorById(assassinato.Assassinado__c);
+            this.updateRound(assassinato.Assassinado__c);
+            let message = "Assassino: " + assassino.Name + "\n";
+            message += "Assassinado: " + assassinado.Name;
+            this.showToast("Assassinato", message, "success", "sticky");
+          } else {
+            this.showToast(
+              "Assassinato",
+              "Ninguém morreu",
+              "warning",
+              "sticky"
+            );
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("erro: " + JSON.stringify(error));
+      });
+  }
+
+  getJogadorById(id) {
+    return this.roundSelecionadoCerto.Jogadores2__r.find(
+      (jogador) => jogador.Id == id
+    );
+  }
+
+  showToast(title, message, variant, mode) {
+    const event = new ShowToastEvent({
+      title: title,
+      message: message,
+      variant: variant,
+      mode: mode
+    });
+    this.dispatchEvent(event);
+  }
+
+  updateRound(idAssassinado) {
+    let round = this.roundSelecionadoCerto;
+    let jogadoresRound = round.Jogadores2__r;
+    jogadoresRound = [
+      ...jogadoresRound.map((jogador) => {
+        if (jogador.Id == idAssassinado) {
+          return { ...jogador, Morreu__c: true };
+        }
+        return { ...jogador };
+      })
+    ];
+
+    round = { ...round, Jogadores2__r: jogadoresRound };
+    this.rounds = [
+      ...this.rounds.map((roundAux) => {
+        if (roundAux.Id == round.Id) {
+          return { ...round };
+        }
+        return { ...roundAux };
+      })
+    ];
+  }
 }

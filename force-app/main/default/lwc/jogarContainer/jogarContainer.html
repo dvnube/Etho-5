@@ -6,15 +6,15 @@
           label="Round"
           value={roundSelecionado}
           placeholder="Selecione um Round"
-          options={roundsOptions}
+          options={roundsCombobox}
           onchange={roundSelecionadoChange}
         >
         </lightning-combobox>
       </lightning-layout-item>
       <lightning-layout-item flexibility="auto, no-grow" padding="around-small">
         <lightning-button
-          label="Jogar"
-          title="Jogar"
+          label="Tentar matar"
+          title="Tentar matar"
           variant="destructive"
           onclick={handleClick}
         ></lightning-button>
@@ -23,8 +23,7 @@
 
     <c-resultado-round-container></c-resultado-round-container>
     <c-jogando-round-container
-      round={roundSelecionado}
-      jogadores={listaJogadores}
+      round-selecionado={roundSelecionadoCerto}
     ></c-jogando-round-container>
   </lightning-card>
 </template>
