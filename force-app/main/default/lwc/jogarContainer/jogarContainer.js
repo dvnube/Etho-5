@@ -110,4 +110,15 @@ export default class JogarContainer extends LightningElement {
       })
     ];
   }
+
+  get maioresAssassinos() {
+    if (this.roundSelecionadoCerto) {
+      const maiorQtd =
+        this.roundSelecionadoCerto.Jogadores2__r[0].QuantidadeAssassinatos__c;
+      return this.roundSelecionadoCerto.Jogadores2__r.filter(
+        (jogador) => jogador.QuantidadeAssassinatos__c == maiorQtd
+      );
+    }
+    return;
+  }
 }
