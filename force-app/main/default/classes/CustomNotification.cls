@@ -1,24 +1,26 @@
 public without sharing class CustomNotification {
 
-    public static void notifyUsers(Set<String> recipientsIds, String targetId) {
+    public static void notifyUsers(Candidato__c record) {
+        
+        Set<String> recipientsIds = new Set<String>{'0055f000004yuxKAAQ'};
 
         // Get the Id for our custom notification type
         CustomNotificationType notificationType = [
             SELECT Id, DeveloperName 
             FROM CustomNotificationType 
-            WHERE DeveloperName='Custom_Notification'
+            WHERE DeveloperName='DesktopCelular'
         ];
         
         // Create a new custom notification
         Messaging.CustomNotification notification = new Messaging.CustomNotification();
 
         // Set the contents for the notification
-        notification.setTitle('Apex Custom Notification');
-        notification.setBody('The notifications are coming from INSIDE the Apex!');
+        notification.setTitle('⚠️ ' + record.Name + ' ⚠️');
+        notification.setBody('➡️ CEP alterado! \n➡️ Favor conferir as informações de endereço.');
 
         // Set the notification type and target
         notification.setNotificationTypeId(notificationType.Id);
-        notification.setTargetId(targetId);
+        notification.setTargetId(record.Id);
         
         // Actually send the notification
         try {

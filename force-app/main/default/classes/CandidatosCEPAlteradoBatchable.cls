@@ -4,9 +4,10 @@ public without sharing class CandidatosCEPAlteradoBatchable implements Database.
         return Database.getQueryLocator(CandidatosSelector.getQueryLocatorCEPBatchable());
     }
   
+    //TODO: atualizar o campo CEPAlterado__c para FALSE
     public void execute(Database.BatchableContext BC, List<Candidato__c> scope) {
         for (Candidato__c record : scope) {
-            System.debug('record: ' + record);
+            CustomNotification.notifyUsers(record);
         }
     }
   
