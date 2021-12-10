@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>AssassinatosHandler</members>
+		<members>AssassinatosTriggerHandler</members>
+		<members>CommunitiesLandingController</members>
+		<members>CommunitiesLandingControllerTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>DesktopCelular</members>
+		<name>CustomNotificationType</name>
+	</types>
+	<types>
+		<members>componenteFilho</members>
+		<members>easyForm2</members>
+		<members>jogandoRoundContainer</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>51.0</version>
+</Package>
