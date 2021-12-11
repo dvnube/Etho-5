@@ -1,6 +1,6 @@
 public without sharing class UpdateFieldsBatchable implements Database.Batchable<sObject>, Database.Stateful {
 
-
+    
     
     public Database.QueryLocator start(Database.BatchableContext BC) {
         return Database.getQueryLocator(string);
